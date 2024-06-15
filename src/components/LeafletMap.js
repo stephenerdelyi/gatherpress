@@ -2,6 +2,8 @@
  * External dependencies.
  */
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import axios from 'axios';
+import { useEffect, useState } from '@wordpress/element';
 
 /**
  * LeafletMap component for GatherPress.
@@ -27,11 +29,34 @@ const LeafletMap = (props) => {
 
 	const testPostition = [51.505, -0.09]; // test value
 
+	const [position, setPosition] = useState([0, 0]);
+
+	useEffect(() => {
+		axios
+			.get(
+				`https://nominatim.openstreetmap.org/search?q=${location}&format=geojson`
+			)
+			.then((res) => {
+				console.log('location', location);
+				console.log('geo response', res.data.features[0].geometry.coordinates[1]);
+				console.log('geo response', res.data.features[0].geometry.coordinates[0]);
+				setPosition([
+					res.data.features[0].geometry.coordinates[1],
+					res.data.features[0].geometry.coordinates[0],
+				]);
+				// console.log('pos after UE', position);
+				// console.log(res.data.features[0].geometry.coordinates[0]);
+			})
+			.catch((err) => {
+		console.log(err)
+			});
+	}, [location, position]);
+
 	return (
 		<MapContainer
 			style={style}
 			className={className}
-			center={testPostition}
+			center={position}
 			zoom={zoom}
 			scrollWheelZoom={false}
 			height={height}
@@ -40,7 +65,7 @@ const LeafletMap = (props) => {
 				attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
 				url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
 			/>
-			<Marker position={testPostition}>
+			<Marker position={position}>
 				<Popup>{location}</Popup>
 			</Marker>
 		</MapContainer>
