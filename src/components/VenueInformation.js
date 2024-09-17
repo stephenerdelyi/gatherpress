@@ -32,12 +32,13 @@ const VenueInformation = () => {
 			...venueInformationMetaData,
 			...metaData,
 		});
-		const meta = { gatherpress_venue_information: payload };
+		const meta = {
+			gatherpress_venue_information: payload,
+			geo_longitude: venueInformationMetaData.longitude ?? 0.0,
+			geo_latitude: venueInformationMetaData.latitude ?? 0.0,
+		};
 
 		editPost({ meta });
-		editPost({
-			geo_latitude: 20.758014,
-		});
 	};
 
 	let venueInformationMetaData = useSelect(

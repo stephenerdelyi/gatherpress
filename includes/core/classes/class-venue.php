@@ -186,7 +186,7 @@ class Venue {
 			'sanitize_callback' => 'sanitize_text_field',
 			'show_in_rest'      => true,
 			'single'            => true,
-			'type'              => 'string',
+			'type'              => 'number',
 		);
 
 		register_post_meta(
@@ -197,9 +197,11 @@ class Venue {
 
 		register_post_meta(
 			self::POST_TYPE,
-			'geo_longiitude',
+			'geo_longitude',
 			$args
 		);
+
+		$args['type'] = 'string';
 
 		$post_meta = array(
 			'gatherpress_venue_information' => $args,
