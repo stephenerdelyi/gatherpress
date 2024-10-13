@@ -132,6 +132,7 @@ class Venue {
 				'menu_icon'    => 'dashicons-location',
 				'template'     => array(
 					array( 'gatherpress/venue' ),
+					// The future! // array( 'core/pattern', array( 'slug' => 'gatherpress/venue-template' ) ), // phpcs:ignore Squiz.PHP.CommentedOutCode.Found !
 				),
 				'has_archive'  => true,
 				'rewrite'      => array(
@@ -157,11 +158,13 @@ class Venue {
 	 */
 	public static function get_localized_post_type_slug(): string {
 		$switched_locale = switch_to_locale( get_locale() );
-		$slug            = _x( 'venue', 'Post Type Slug', 'gatherpress' );
-		$slug            = sanitize_title( $slug, '', 'save' );
+		$slug            = _x( 'Venue', 'Post Type Singular Name', 'gatherpress' );
+		$slug            = sanitize_title( $slug );
+
 		if ( $switched_locale ) {
 			restore_previous_locale();
 		}
+
 		return $slug;
 	}
 
@@ -246,6 +249,8 @@ class Venue {
 				'show_in_rest'       => true,
 			)
 		);
+		// It is necessary to make this taxonomy visible on event posts, within REST responses.
+		register_taxonomy_for_object_type( self::TAXONOMY, Event::POST_TYPE );
 	}
 
 	/**
@@ -345,7 +350,7 @@ class Venue {
 			} else {
 				// Update the existing term with the new name and slug.
 				wp_update_term(
-					$term['term_id'],
+					intval( $term['term_id'] ),
 					self::TAXONOMY,
 					array(
 						'name' => $title,
