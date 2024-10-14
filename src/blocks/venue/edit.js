@@ -4,12 +4,13 @@
 import { __ } from '@wordpress/i18n';
 import { InspectorControls, useBlockProps } from '@wordpress/block-editor';
 import {
+	// eslint-disable-next-line @wordpress/no-unsafe-wp-apis
+	__experimentalNumberControl as NumberControl,
 	PanelBody,
 	PanelRow,
 	RadioControl,
 	RangeControl,
 	ToggleControl,
-	TextControl,
 } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect, useState } from '@wordpress/element';
@@ -61,7 +62,7 @@ const Edit = ({ attributes, setAttributes, isSelected }) => {
 				?.gatherpress_online_event_link
 	);
 
-	let { mapShow, mapCustomLatLng } = attributes;
+	let { mapShow, mapCustomLatLong } = attributes;
 	const editPost = useDispatch('core/editor').editPost;
 	const updateVenueMeta = (metaData) => {
 		const payload = JSON.stringify({
@@ -229,19 +230,22 @@ const Edit = ({ attributes, setAttributes, isSelected }) => {
 						<PanelRow>
 							<ToggleControl
 								label={
-									mapCustomLatLng
+									mapCustomLatLong
 										? __('Use custom values', 'gatherpress')
-										: __('Use default values', 'gatherpress')
+										: __(
+												'Use default values',
+												'gatherpress'
+											)
 								}
-								checked={mapCustomLatLng}
+								checked={mapCustomLatLong}
 								onChange={(value) => {
-									setAttributes({ mapCustomLatLng: value });
+									setAttributes({ mapCustomLatLong: value });
 								}}
 							/>
 						</PanelRow>
-						{mapCustomLatLng && (
+						{mapCustomLatLong && (
 							<>
-								<TextControl
+								<NumberControl
 									label={__('Latitude', 'gatherpress')}
 									value={latitude}
 									onChange={(value) => {
@@ -249,7 +253,7 @@ const Edit = ({ attributes, setAttributes, isSelected }) => {
 										updateVenueMeta({ latitude: value });
 									}}
 								/>
-								<TextControl
+								<NumberControl
 									label={__('Longitude', 'gatherpress')}
 									value={longitude}
 									onChange={(value) => {
